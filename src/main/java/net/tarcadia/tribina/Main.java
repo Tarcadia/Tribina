@@ -13,11 +13,16 @@ import org.slf4j.LoggerFactory;
 
 public class Main {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger("root");
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+    private static final int compressionThreshold = Integer.getInteger("minestom.compression-threshold", 256);
+    private static final String brandName = "Tribina";
 
     public static void main(String[] args) {
-        // Initialization
-        MinecraftServer minecraftServer = MinecraftServer.init();
+
+        MinecraftServer server = MinecraftServer.init();
+        MinecraftServer.setCompressionThreshold(compressionThreshold);
+        MinecraftServer.setBrandName(brandName);
+
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
         // Create the instance
         InstanceContainer instanceContainer = instanceManager.createInstanceContainer();
