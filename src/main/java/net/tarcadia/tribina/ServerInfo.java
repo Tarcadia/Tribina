@@ -21,13 +21,13 @@ public class ServerInfo {
     public static String FAVICON = Favicon.fromFile(new File("./favicon.png"), Favicon.Type.PNG);
     public static Component MOTD = Component.text("");
     public static int MAX_PLAYER_COUNT = Integer.getInteger("tribina.max-player-count", 100);
-    public static Component FULL_SERVER_MESSAGE = Component.text("Full Server");
+    public static Component MAX_PLAYER_MESSAGE = Component.text("Full Server");
 
     public static void initServerInfo() {
         ConnectionManager manager = MinecraftServer.getConnectionManager();
         manager.setUuidProvider((playerConnection, username) -> {
             if (MinecraftServer.getConnectionManager().getOnlinePlayers().size() >= MAX_PLAYER_COUNT) {
-                playerConnection.sendPacket(new DisconnectPacket(FULL_SERVER_MESSAGE));
+                playerConnection.sendPacket(new DisconnectPacket(MAX_PLAYER_MESSAGE));
                 playerConnection.disconnect();
                 return null;
             } else {
