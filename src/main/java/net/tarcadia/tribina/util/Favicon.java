@@ -10,9 +10,9 @@ import java.util.Base64;
 
 public class Favicon {
 
-    public static String fromFile(@NotNull File filename, @NotNull Type type) {
+    public static String fromFile(@NotNull File file, @NotNull Type type) {
         String favicon = null;
-        try (InputStream stream = new FileInputStream(filename)) {
+        try (InputStream stream = new FileInputStream(file)) {
             favicon = "data:image/" + type.getType() + ";base64," +
                     Base64.getEncoder().encodeToString(stream.readAllBytes());
         } catch (Exception e) {
