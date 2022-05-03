@@ -1,6 +1,7 @@
 package net.tarcadia.tribina.util;
 
 import net.tarcadia.tribina.Main;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,7 +10,7 @@ import java.util.Base64;
 
 public class Favicon {
 
-    public static String fromFile(File filename, Type type) {
+    public static String fromFile(@NotNull File filename, @NotNull Type type) {
         String favicon = null;
         try (InputStream stream = new FileInputStream(filename)) {
             favicon = "data:image/" + type.getType() + ";base64," +
@@ -20,7 +21,7 @@ public class Favicon {
         return favicon;
     }
 
-    public static String fromResource(String resource, Type type) {
+    public static String fromResource(@NotNull String resource, @NotNull Type type) {
         String favicon = null;
         try (InputStream stream = Main.class.getResourceAsStream(resource)) {
             if (stream != null)
@@ -39,7 +40,7 @@ public class Favicon {
 
         private final String type;
 
-        Type(String type) {
+        Type(@NotNull String type) {
             this.type = type;
         }
         public String getType() {
