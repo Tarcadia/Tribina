@@ -11,13 +11,14 @@ import net.minestom.server.network.packet.server.play.DisconnectPacket;
 import net.minestom.server.ping.ResponseData;
 import net.tarcadia.tribina.util.Favicon;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.UUID;
 
 public class ServerInfo {
 
-    public static String FAVICON = Favicon.fromResource("/favicon.png", Favicon.Type.PNG);
+    public static String FAVICON = Favicon.fromFile(new File("./favicon.png"), Favicon.Type.PNG);
     public static Component MOTD = Component.text("");
     public static int MAX_PLAYER_COUNT = Integer.getInteger("tribina.max-player-count", 100);
     public static Component FULL_SERVER_MESSAGE = Component.text("Full Server");
