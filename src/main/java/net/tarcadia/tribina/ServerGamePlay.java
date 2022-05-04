@@ -62,6 +62,7 @@ public class ServerGamePlay {
         GlobalEventHandler handler = MinecraftServer.getGlobalEventHandler();
         handler.addListener(PlayerDisconnectEvent.class, event -> {
             Player player = event.getPlayer();
+            saveGamePlay(player);
             endGamePlay(player);
             removeGamePlay(player);
         });
