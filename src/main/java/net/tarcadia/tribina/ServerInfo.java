@@ -23,7 +23,7 @@ public class ServerInfo {
 
     private static String FAVICON = Favicon.fromFile(new File("./favicon.png"));
     private static Component MOTD = Component.text("Tribina comes here.");
-    private static int MAX_PLAYER_COUNT = Integer.getInteger("tribina.max-player-count", 1);
+    private static int MAX_PLAYER_COUNT = Integer.getInteger("tribina.max-player-count", 100);
     private static Component MAX_PLAYER_MESSAGE = Component.translatable("multiplayer.disconnect.server_full");
 
     @Nullable
