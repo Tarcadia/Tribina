@@ -7,7 +7,7 @@ import net.minestom.server.command.builder.Command;
 public final class StopCommand extends Command {
     public StopCommand() {
         super("stop");
-        this.setCondition(((sender, commandString) -> sender instanceof ConsoleSender));
-        this.setDefaultExecutor(((sender, context) -> MinecraftServer.stopCleanly()));
+        this.setCondition((sender, commandString) -> sender instanceof ConsoleSender);
+        this.setDefaultExecutor((sender, context) -> MinecraftServer.stopCleanly());
     }
 }
