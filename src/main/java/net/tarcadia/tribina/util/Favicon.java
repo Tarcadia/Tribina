@@ -16,7 +16,7 @@ public class Favicon {
         String favicon = null;
         try {
             InputStream stream = new FileInputStream(file);
-            String[] filename= file.getName().split("\\.");
+            String[] filename = file.getName().split("\\.");
             String suffix = filename[filename.length - 1].toUpperCase();
             Type type = Type.valueOf(suffix);
             favicon = "data:image/" + type.getType() + ";base64," +
@@ -32,7 +32,7 @@ public class Favicon {
         String favicon = null;
         try {
             InputStream stream = Main.class.getResourceAsStream(resource);
-            String[] filename= resource.split("\\.");
+            String[] filename = resource.split("\\.");
             String suffix = filename[filename.length - 1].toUpperCase();
             Type type = Type.valueOf(suffix);
             if (stream != null)
