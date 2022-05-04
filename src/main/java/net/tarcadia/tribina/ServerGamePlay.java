@@ -1,6 +1,7 @@
 package net.tarcadia.tribina;
 
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
@@ -54,10 +55,17 @@ public class ServerGamePlay {
     }
 
     public static void initServerGamePlay() {
+        LobbyGamePlay.init();
 
-        // Instances
-        InstanceManager instanceManager = MinecraftServer.getInstanceManager();
-        InstanceContainer instanceContainer = instanceManager.createInstanceContainer();
+        GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
+        globalEventHandler.addListener(PlayerLoginEvent.class, event -> {
+            Player player = event.getPlayer();
+            LobbyGamePlay lobbyGamePlay = new LobbyGamePlay(player);
+            ServerGamePlay.setGamePlay(player, lobbyGamePlay);
+            lobbyGamePlay.start_no_respawn(player);
+            event.setSpawningInstance(LobbyGamePlay.getLobbyWorld());
+            event.getPlayer().setRespawnPoint(new Pos(0, 42, 0));
+        });
 
         GlobalEventHandler handler = MinecraftServer.getGlobalEventHandler();
         handler.addListener(PlayerDisconnectEvent.class, event -> {
