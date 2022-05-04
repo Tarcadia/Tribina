@@ -5,11 +5,14 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.event.GlobalEventHandler;
+import net.minestom.server.event.player.AsyncPlayerPreLoginEvent;
 import net.minestom.server.event.server.ServerListPingEvent;
 import net.minestom.server.network.ConnectionManager;
-import net.minestom.server.network.packet.server.play.DisconnectPacket;
+import net.minestom.server.network.packet.server.login.LoginDisconnectPacket;
 import net.minestom.server.ping.ResponseData;
 import net.tarcadia.tribina.util.Favicon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -119,15 +122,7 @@ public class ServerInfo {
 
     public static void initServerInfo() {
         ConnectionManager manager = MinecraftServer.getConnectionManager();
-        manager.setUuidProvider((playerConnection, username) -> {
-            if (MinecraftServer.getConnectionManager().getOnlinePlayers().size() >= MAX_PLAYER_COUNT) {
-                playerConnection.sendPacket(new DisconnectPacket(MAX_PLAYER_MESSAGE));
-                playerConnection.disconnect();
-                return null;
-            } else {
-                return UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8));
-            }
-        });
+        manager.setUuidProvider((playerConnection, username) -> UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8)));
         manager.setPlayerProvider(((uuid, username, connection) -> {
             Player player = new Player(uuid, username, connection);
             player.setSkin(PlayerSkin.fromUsername(username));
@@ -135,6 +130,12 @@ public class ServerInfo {
         }));
 
         GlobalEventHandler handler = MinecraftServer.getGlobalEventHandler();
+        handler.addListener(AsyncPlayerPreLoginEvent.class, event -> {
+            if (MinecraftServer.getConnectionManager().getOnlinePlayers().size() >= MAX_PLAYER_COUNT) {
+                event.getPlayer().getPlayerConnection().sendPacket(new LoginDisconnectPacket(MAX_PLAYER_MESSAGE));
+                event.getPlayer().getPlayerConnection().disconnect();
+            }
+        });
         handler.addListener(ServerListPingEvent.class, event -> {
             final ResponseData responseData = event.getResponseData();
             if (FAVICON != null) responseData.setFavicon(FAVICON);
