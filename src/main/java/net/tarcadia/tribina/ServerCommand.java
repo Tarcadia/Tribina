@@ -2,6 +2,7 @@ package net.tarcadia.tribina;
 
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
+import net.tarcadia.tribina.command.ServerInfoCommand;
 import net.tarcadia.tribina.command.StopCommand;
 
 public class ServerCommand {
@@ -11,6 +12,7 @@ public class ServerCommand {
         manager.setUnknownCommandCallback(((sender, command) -> {
         }));
         manager.register(new StopCommand());
+        manager.register(new ServerInfoCommand());
     }
 
 }
