@@ -152,6 +152,10 @@ public class ServerInfo {
 
         GlobalEventHandler handler = MinecraftServer.getGlobalEventHandler();
         handler.addListener(AsyncPlayerPreLoginEvent.class, event -> {
+            if (BAN_PLAYER_LIST.contains(event.getUsername()) || BAN_IP_LIST.contains(event.getPlayer().getPlayerConnection().getRemoteAddress().toString().split(":")[0])) {
+                event.getPlayer().getPlayerConnection().sendPacket(new LoginDisconnectPacket(Component.translatable("multiplayer.disconnect.banned")));
+                event.getPlayer().getPlayerConnection().disconnect();
+            }
             if (MinecraftServer.getConnectionManager().getOnlinePlayers().size() >= MAX_PLAYER_COUNT) {
                 event.getPlayer().getPlayerConnection().sendPacket(new LoginDisconnectPacket(Component.translatable("multiplayer.disconnect.server_full")));
                 event.getPlayer().getPlayerConnection().disconnect();
