@@ -24,7 +24,7 @@ public class LineConfigurationEntry implements ConfigurationEntry {
 
     @Override
     public String serialize() {
-        return key + " = " + val;
+        return key + " = " + val + "\n";
     }
 
     @Override
