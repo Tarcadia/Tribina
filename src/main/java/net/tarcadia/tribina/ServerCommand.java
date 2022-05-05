@@ -9,8 +9,7 @@ public class ServerCommand {
 
     public static void initServerCommand() {
         CommandManager manager = MinecraftServer.getCommandManager();
-        manager.setUnknownCommandCallback(((sender, command) -> {
-        }));
+        manager.setUnknownCommandCallback(((sender, command) -> sender.sendMessage("Syntax Error: Command not found.")));
         manager.register(new StopCommand());
         manager.register(new ServerInfoCommand());
     }
