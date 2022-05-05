@@ -65,7 +65,7 @@ public class ServerInfoCommand extends Command {
                 else sender.sendMessage("Server ban player " + username + " unsuccessfully.");
                 },
                     ArgumentType.Literal("player"),
-                    ArgumentType.Entity("username").onlyPlayers(true)
+                    ArgumentType.String("username")
             );
             this.addSyntax((sender, context) -> {
                 String ip = context.get("user-ip");
@@ -81,23 +81,23 @@ public class ServerInfoCommand extends Command {
 
     private static class UnbanCommand extends Command {
         public UnbanCommand() {
-            super("ban");
+            super("unban");
             this.setCondition((sender, commandString) -> sender instanceof ConsoleSender);
-            this.setDefaultExecutor((sender, context) -> sender.sendMessage("Syntax: \"server ban {player <player>}|{ip <ip>}\""));
+            this.setDefaultExecutor((sender, context) -> sender.sendMessage("Syntax: \"server unban {player <player>}|{ip <ip>}\""));
             this.addSyntax((sender, context) -> {
                 String username = context.get("username");
                 boolean ret = ServerInfo.unbanPlayer(username);
-                if (ret) sender.sendMessage("Server ban player " + username + " successfully.");
-                else sender.sendMessage("Server ban player " + username + " unsuccessfully.");
+                if (ret) sender.sendMessage("Server unban player " + username + " successfully.");
+                else sender.sendMessage("Server unban player " + username + " unsuccessfully.");
                 },
                     ArgumentType.Literal("player"),
-                    ArgumentType.Entity("username").onlyPlayers(true)
+                    ArgumentType.String("username")
             );
             this.addSyntax((sender, context) -> {
                 String ip = context.get("user-ip");
                 boolean ret = ServerInfo.unbanIP(ip);
-                if (ret) sender.sendMessage("Server ban ip " + ip + " successfully.");
-                else sender.sendMessage("Server ban ip " + ip + " unsuccessfully.");
+                if (ret) sender.sendMessage("Server unban ip " + ip + " successfully.");
+                else sender.sendMessage("Server unban ip " + ip + " unsuccessfully.");
                 },
                     ArgumentType.Literal("ip"),
                     ArgumentType.String("user-ip")
