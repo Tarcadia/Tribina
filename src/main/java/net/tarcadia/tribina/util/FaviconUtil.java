@@ -21,9 +21,7 @@ public class FaviconUtil {
             Type type = Type.valueOf(suffix);
             favicon = "data:image/" + type.getType() + ";base64," +
                     Base64.getEncoder().encodeToString(stream.readAllBytes());
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
+        } catch (Throwable ignored) {}
         return favicon;
     }
 
@@ -38,9 +36,7 @@ public class FaviconUtil {
             if (stream != null)
                 favicon = "data:image/" + type.getType() + ";base64," +
                         Base64.getEncoder().encodeToString(stream.readAllBytes());
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
+        } catch (Throwable ignored) {}
         return favicon;
     }
 
