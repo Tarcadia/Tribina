@@ -32,12 +32,47 @@ public class ServerInfo {
     private static final String CFG_MOTD = "motd";
     private static final String CFG_MAX_PLAYER_COUNT = "max-player-count";
 
-    private static final Map<String, String> CONFIG = new ConcurrentHashMap<>(ConfigUtil.fromFileMap(new File(PATH_CONFIG)));
-    private static String FAVICON = FaviconUtil.fromFile(new File(CONFIG.getOrDefault(CFG_FAVICON, PATH_FAVICON)));
-    private static Component MOTD = Component.text(CONFIG.getOrDefault(CFG_MOTD, "Tribina comes here."));
-    private static int MAX_PLAYER_COUNT = Integer.parseInt(CONFIG.getOrDefault(CFG_MAX_PLAYER_COUNT, "100"));
-    private static final Set<String> BAN_PLAYER_LIST = new CopyOnWriteArraySet<>(ConfigUtil.fromFileList(new File(PATH_BAN_PLAYER_LIST)));
-    private static final Set<String> BAN_IP_LIST = new CopyOnWriteArraySet<>(ConfigUtil.fromFileList(new File(PATH_BAN_IP_LIST)));
+    private static final Map<String, String> CONFIG;
+    private static String FAVICON;
+    private static Component MOTD;
+    private static int MAX_PLAYER_COUNT;
+    private static final Set<String> BAN_PLAYER_LIST;
+    private static final Set<String> BAN_IP_LIST;
+
+    static {
+        Map<String, String> config;
+        try {
+            config = new ConcurrentHashMap<>(ConfigUtil.fromFileMap(new File(PATH_CONFIG)));
+        } catch (Throwable e) {
+            config = new ConcurrentHashMap<>();
+        }
+        CONFIG = config;
+        FAVICON = FaviconUtil.fromFile(new File(CONFIG.getOrDefault(CFG_FAVICON, PATH_FAVICON)));
+        MOTD = Component.text(CONFIG.getOrDefault(CFG_MOTD, "Tribina comes here."));
+
+        int max_player_count;
+        try {
+            max_player_count = Integer.parseInt(CONFIG.getOrDefault(CFG_MAX_PLAYER_COUNT, "100"));
+        } catch (Throwable e) {
+            max_player_count = 100;
+        }
+        MAX_PLAYER_COUNT = max_player_count;
+
+        Set<String> ban_player_list;
+        Set<String> ban_ip_list;
+        try {
+            ban_player_list = new CopyOnWriteArraySet<>(ConfigUtil.fromFileList(new File(PATH_BAN_PLAYER_LIST)));
+        } catch (Throwable e) {
+            ban_player_list = new CopyOnWriteArraySet<>();
+        }
+        try {
+            ban_ip_list = new CopyOnWriteArraySet<>(ConfigUtil.fromFileList(new File(PATH_BAN_IP_LIST)));
+        } catch (Throwable e) {
+            ban_ip_list = new CopyOnWriteArraySet<>();
+        }
+        BAN_PLAYER_LIST = ban_player_list;
+        BAN_IP_LIST = ban_ip_list;
+    }
 
     @Nullable
     public static String getFavicon() {
