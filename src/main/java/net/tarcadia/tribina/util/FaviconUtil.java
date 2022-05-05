@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Base64;
 
-public class Favicon {
+public class FaviconUtil {
 
     @Nullable
     public static String fromFile(@NotNull File file) {

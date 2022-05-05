@@ -10,7 +10,7 @@ import net.minestom.server.event.server.ServerListPingEvent;
 import net.minestom.server.network.ConnectionManager;
 import net.minestom.server.network.packet.server.login.LoginDisconnectPacket;
 import net.minestom.server.ping.ResponseData;
-import net.tarcadia.tribina.util.Favicon;
+import net.tarcadia.tribina.util.FaviconUtil;
 import net.tarcadia.tribina.util.ConfigUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +33,7 @@ public class ServerInfo {
     private static final String CFG_MAX_PLAYER_COUNT = "max-player-count";
 
     private static final Map<String, String> CONFIG = new ConcurrentHashMap<>(ConfigUtil.fromFileMap(new File(PATH_CONFIG)));
-    private static String FAVICON = Favicon.fromFile(new File(CONFIG.getOrDefault(CFG_FAVICON, PATH_FAVICON)));
+    private static String FAVICON = FaviconUtil.fromFile(new File(CONFIG.getOrDefault(CFG_FAVICON, PATH_FAVICON)));
     private static Component MOTD = Component.text(CONFIG.getOrDefault(CFG_MOTD, "Tribina comes here."));
     private static int MAX_PLAYER_COUNT = Integer.parseInt(CONFIG.getOrDefault(CFG_MAX_PLAYER_COUNT, "100"));
     private static final Set<String> BAN_PLAYER_LIST = new CopyOnWriteArraySet<>(ConfigUtil.fromFileList(new File(PATH_BAN_PLAYER_LIST)));
@@ -48,7 +48,7 @@ public class ServerInfo {
         String favicon = null;
         try {
             File file = new File(filename);
-            favicon = Favicon.fromFile(file);
+            favicon = FaviconUtil.fromFile(file);
         } catch (Throwable ignored) {}
         if (favicon != null) {
             CONFIG.put(CFG_FAVICON, filename);
