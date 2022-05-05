@@ -13,12 +13,11 @@ public class ServerInfoCommand extends Command {
             this.setCondition((sender, commandString) -> sender instanceof ConsoleSender);
             this.setDefaultExecutor((sender, context) -> sender.sendMessage("Syntax: \"server favicon <path>\""));
             this.addSyntax((sender, context) -> {
-                String path = context.get("path");
-                boolean ret = ServerInfo.setFavicon(path);
+                boolean ret = ServerInfo.setFavicon(context.get("path"));
                 if (ret) sender.sendMessage("Server favicon set successfully.");
                 else sender.sendMessage("Server favicon set unsuccessfully.");
                 },
-                    ArgumentType.String("path").setDefaultValue("favicon.png")
+                    ArgumentType.String("path").setDefaultValue("./favicon.png").filter(s -> !s.isBlank())
             );
         }
     }
@@ -33,7 +32,7 @@ public class ServerInfoCommand extends Command {
                 if (ret) sender.sendMessage("Server MOTD set successfully.");
                 else sender.sendMessage("Server MOTD set unsuccessfully.");
                 },
-                    ArgumentType.String("motd")
+                    ArgumentType.String("motd").filter(s -> !s.isBlank())
             );
         }
     }
@@ -65,7 +64,7 @@ public class ServerInfoCommand extends Command {
                 else sender.sendMessage("Server ban player " + username + " unsuccessfully.");
                 },
                     ArgumentType.Literal("player"),
-                    ArgumentType.String("username")
+                    ArgumentType.String("username").filter(s -> !s.isBlank())
             );
             this.addSyntax((sender, context) -> {
                 String ip = context.get("user-ip");
@@ -74,7 +73,7 @@ public class ServerInfoCommand extends Command {
                 else sender.sendMessage("Server ban ip " + ip + " unsuccessfully.");
                 },
                     ArgumentType.Literal("ip"),
-                    ArgumentType.String("user-ip")
+                    ArgumentType.String("user-ip").filter(s -> !s.isBlank())
             );
         }
     }
@@ -91,7 +90,7 @@ public class ServerInfoCommand extends Command {
                 else sender.sendMessage("Server unban player " + username + " unsuccessfully.");
                 },
                     ArgumentType.Literal("player"),
-                    ArgumentType.String("username")
+                    ArgumentType.String("username").filter(s -> !s.isBlank())
             );
             this.addSyntax((sender, context) -> {
                 String ip = context.get("user-ip");
@@ -100,7 +99,22 @@ public class ServerInfoCommand extends Command {
                 else sender.sendMessage("Server unban ip " + ip + " unsuccessfully.");
                 },
                     ArgumentType.Literal("ip"),
-                    ArgumentType.String("user-ip")
+                    ArgumentType.String("user-ip").filter(s -> !s.isBlank())
+            );
+        }
+    }
+
+    private static class InfoCommand extends Command {
+        public InfoCommand() {
+            super("info");
+            this.setCondition((sender, commandString) -> sender instanceof ConsoleSender);
+            this.setDefaultExecutor((sender, context) -> sender.sendMessage("Syntax: \"server info\""));
+            this.addSyntax((sender, context) -> {
+                sender.sendMessage("Favicon: " + ServerInfo.getFavicon());
+                sender.sendMessage("MOTD: " + ServerInfo.getMOTD());
+                sender.sendMessage("Max Player Count: " + ServerInfo.getMaxPlayerCount());
+                sender.sendMessage("Ban List: " + ServerInfo.getBanList());
+            }
             );
         }
     }
@@ -113,6 +127,7 @@ public class ServerInfoCommand extends Command {
         this.addSubcommand(new MaxPlayerCountCommand());
         this.addSubcommand(new BanCommand());
         this.addSubcommand(new UnbanCommand());
+        this.addSubcommand(new InfoCommand());
         this.setDefaultExecutor((sender, context) -> sender.sendMessage("Syntax: \"server favicon|motd|max-player-count|ban|unban ...\""));
     }
 }
