@@ -44,6 +44,10 @@ public class ListConfigurationEntry implements ConfigurationEntry {
         return null;
     }
 
+    public List<String> getList() {
+        return new LinkedList<>(this.list);
+    }
+
     @Override
     public String serialize() {
         StringBuilder builder = new StringBuilder();
