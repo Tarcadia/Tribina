@@ -8,10 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -66,7 +63,7 @@ public class Configuration {
     }
 
     public int getInteger(@NotNull String key, int def) {
-        ConfigurationEntry ce = config.get(key);
+        ConfigurationEntry ce = config.get(key.trim().toLowerCase());
         if (ce == null) return def;
         Integer val;
         try {
@@ -79,7 +76,7 @@ public class Configuration {
     }
 
     public long getLong(@NotNull String key, long def) {
-        ConfigurationEntry ce = config.get(key);
+        ConfigurationEntry ce = config.get(key.trim().toLowerCase());
         if (ce == null) return def;
         Long val;
         try {
@@ -92,7 +89,7 @@ public class Configuration {
     }
 
     public float getDouble(@NotNull String key, float def) {
-        ConfigurationEntry ce = config.get(key);
+        ConfigurationEntry ce = config.get(key.trim().toLowerCase());
         if (ce == null) return def;
         Float val;
         try {
@@ -105,7 +102,7 @@ public class Configuration {
     }
 
     public double getDouble(@NotNull String key, double def) {
-        ConfigurationEntry ce = config.get(key);
+        ConfigurationEntry ce = config.get(key.trim().toLowerCase());
         if (ce == null) return def;
         Double val;
         try {
@@ -122,7 +119,7 @@ public class Configuration {
     }
 
     public boolean getBoolean(@NotNull String key, boolean def) {
-        ConfigurationEntry ce = config.get(key);
+        ConfigurationEntry ce = config.get(key.trim().toLowerCase());
         if (ce == null) return def;
         String val = ce.getValue().trim().toLowerCase();
         if (val.equals("true") || val.equals("yes") || val.equals("on") || val.equals("1")) return true;
@@ -132,45 +129,60 @@ public class Configuration {
 
     @Nullable
     public String getString(@NotNull String key) {
-        ConfigurationEntry ce = config.get(key);
+        ConfigurationEntry ce = config.get(key.trim().toLowerCase());
         if (ce == null) return null;
         else return ce.getValue();
     }
 
     @NotNull
     public String getString(@NotNull String key, @NotNull String def) {
-        ConfigurationEntry ce = config.get(key);
+        ConfigurationEntry ce = config.get(key.trim().toLowerCase());
         if (ce == null) return def;
         else return ce.getValue();
     }
 
-    public boolean modify(@NotNull String key, @NotNull String val) {
-        ConfigurationEntry ce = config.get(key);
+    @NotNull
+    public List<String> getList(@NotNull String key) {
+        return getList(key, new LinkedList<>());
+    }
+
+    @NotNull
+    public List<String> getList(@NotNull String key, @NotNull List<String> def) {
+        ConfigurationEntry ce = config.get(key.trim().toLowerCase());
+        if (ce instanceof ListConfigurationEntry) return ((ListConfigurationEntry) ce).getList();
+        else return def;
+    }
+
+    public void modify(@NotNull String key, @NotNull String val) {
+        ConfigurationEntry ce = config.get(key.trim().toLowerCase());
         if (ce instanceof LineConfigurationEntry) {
             ce.modify(val);
-            return true;
         } else {
-            return false;
+            ce = new LineConfigurationEntry(key, val);
+            this.entries.add(ce);
+            this.config.put(key.trim().toLowerCase(), ce);
         }
     }
 
-    public boolean modifyAdd(@NotNull String key, @NotNull String val) {
+    public void modifyAdd(@NotNull String key, @NotNull String val) {
         ConfigurationEntry ce = config.get(key);
         if (ce instanceof ListConfigurationEntry) {
             ((ListConfigurationEntry) ce).add(val);
-            return true;
         } else {
-            return false;
+            ce = new ListConfigurationEntry(key, val);
+            this.entries.add(ce);
+            this.config.put(key.trim().toLowerCase(), ce);
         }
     }
 
-    public boolean modifyRemove(@NotNull String key, @NotNull String val) {
+    public void modifyRemove(@NotNull String key, @NotNull String val) {
         ConfigurationEntry ce = config.get(key);
         if (ce instanceof ListConfigurationEntry) {
             ((ListConfigurationEntry) ce).remove(val);
-            return true;
         } else {
-            return false;
+            ce = new ListConfigurationEntry(key, val);
+            this.entries.add(ce);
+            this.config.put(key.trim().toLowerCase(), ce);
         }
     }
 
