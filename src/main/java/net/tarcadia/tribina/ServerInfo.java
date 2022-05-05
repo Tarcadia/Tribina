@@ -47,7 +47,15 @@ public class ServerInfo {
             config = new ConcurrentHashMap<>();
         }
         CONFIG = config;
-        FAVICON = FaviconUtil.fromFile(new File(CONFIG.getOrDefault(CFG_FAVICON, PATH_FAVICON)));
+
+        String favicon;
+        try {
+            favicon = FaviconUtil.fromFile(new File(CONFIG.getOrDefault(CFG_FAVICON, PATH_FAVICON)));
+        } catch (Throwable e) {
+            favicon = null;
+        }
+        FAVICON = favicon;
+
         MOTD = Component.text(CONFIG.getOrDefault(CFG_MOTD, "Tribina comes here."));
 
         int max_player_count;
