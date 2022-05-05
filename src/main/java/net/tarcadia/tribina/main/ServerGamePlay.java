@@ -1,4 +1,4 @@
-package net.tarcadia.tribina;
+package net.tarcadia.tribina.main;
 
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;

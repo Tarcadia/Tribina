@@ -1,6 +1,6 @@
 package net.tarcadia.tribina.util;
 
-import net.tarcadia.tribina.Main;
+import net.tarcadia.tribina.main.Main;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

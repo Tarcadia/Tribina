@@ -3,7 +3,7 @@ package net.tarcadia.tribina.command;
 import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
-import net.tarcadia.tribina.ServerInfo;
+import net.tarcadia.tribina.main.ServerInfo;
 
 public class ServerInfoCommand extends Command {
 

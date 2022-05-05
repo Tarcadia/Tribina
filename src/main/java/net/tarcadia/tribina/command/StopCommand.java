@@ -3,7 +3,7 @@ package net.tarcadia.tribina.command;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.command.builder.Command;
-import net.tarcadia.tribina.ServerGamePlay;
+import net.tarcadia.tribina.main.ServerGamePlay;
 
 public final class StopCommand extends Command {
     public StopCommand() {

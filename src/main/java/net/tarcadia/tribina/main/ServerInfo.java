@@ -1,4 +1,4 @@
-package net.tarcadia.tribina;
+package net.tarcadia.tribina.main;
 
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;

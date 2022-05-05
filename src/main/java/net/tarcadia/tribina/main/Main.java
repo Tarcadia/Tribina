@@ -1,12 +1,12 @@
-package net.tarcadia.tribina;
+package net.tarcadia.tribina.main;
 
 import net.minestom.server.MinecraftServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static net.tarcadia.tribina.ServerGamePlay.initServerGamePlay;
-import static net.tarcadia.tribina.ServerInfo.initServerInfo;
-import static net.tarcadia.tribina.ServerCommand.initServerCommand;
+import static net.tarcadia.tribina.main.ServerGamePlay.initServerGamePlay;
+import static net.tarcadia.tribina.main.ServerInfo.initServerInfo;
+import static net.tarcadia.tribina.main.ServerCommand.initServerCommand;
 
 public class Main {
 
