@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -146,6 +147,8 @@ public class ServerInfo {
 
     public static boolean banPlayer(@NotNull String username) {
         BAN_PLAYER_LIST.add(username);
+        Player player = MinecraftServer.getConnectionManager().getPlayer(username);
+        if (player != null) player.kick(Component.translatable("multiplayer.disconnect.banned"));
         try {
             ConfigUtil.toFileList(new File(PATH_BAN_PLAYER_LIST), BAN_PLAYER_LIST);
             return true;
@@ -156,6 +159,9 @@ public class ServerInfo {
 
     public static boolean banIP(@NotNull String ip) {
         BAN_IP_LIST.add(ip);
+        for (Player player : MinecraftServer.getConnectionManager().getOnlinePlayers()) {
+            if (isBanned(player)) player.kick(Component.translatable("multiplayer.disconnect.banned"));
+        }
         try {
             ConfigUtil.toFileList(new File(PATH_BAN_IP_LIST), BAN_IP_LIST);
             return true;
@@ -184,6 +190,16 @@ public class ServerInfo {
         }
     }
 
+    public static boolean isBanned(@NotNull Player player) {
+        return (
+                BAN_PLAYER_LIST.contains(player.getUsername()) ||
+                (
+                        player.getPlayerConnection().getRemoteAddress() instanceof InetSocketAddress &&
+                        BAN_IP_LIST.contains(((InetSocketAddress)player.getPlayerConnection().getRemoteAddress()).getHostName())
+                )
+        );
+    }
+
     public static void initServerInfo() {
         ConnectionManager manager = MinecraftServer.getConnectionManager();
         manager.setUuidProvider((playerConnection, username) -> UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8)));
@@ -195,7 +211,7 @@ public class ServerInfo {
 
         GlobalEventHandler handler = MinecraftServer.getGlobalEventHandler();
         handler.addListener(AsyncPlayerPreLoginEvent.class, event -> {
-            if (BAN_PLAYER_LIST.contains(event.getUsername()) || BAN_IP_LIST.contains(event.getPlayer().getPlayerConnection().getRemoteAddress().toString().split(":")[0])) {
+            if (isBanned(event.getPlayer())) {
                 event.getPlayer().getPlayerConnection().sendPacket(new LoginDisconnectPacket(Component.translatable("multiplayer.disconnect.banned")));
                 event.getPlayer().getPlayerConnection().disconnect();
             }
