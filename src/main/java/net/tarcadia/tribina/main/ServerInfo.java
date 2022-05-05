@@ -11,7 +11,7 @@ import net.minestom.server.network.ConnectionManager;
 import net.minestom.server.network.packet.server.login.LoginDisconnectPacket;
 import net.minestom.server.ping.ResponseData;
 import net.tarcadia.tribina.util.FaviconUtil;
-import net.tarcadia.tribina.util.ConfigUtil;
+import net.tarcadia.tribina.util.configuration.Configuration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,69 +19,25 @@ import java.io.File;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 public class ServerInfo {
 
     private static final String PATH_CONFIG = "./tribina.properties";
     private static final String PATH_FAVICON = "./favicon.png";
-    private static final String PATH_BAN_PLAYER_LIST = "./ban-player.txt";
-    private static final String PATH_BAN_IP_LIST = "./ban-ip.txt";
 
     private static final String CFG_FAVICON = "favicon";
     private static final String CFG_MOTD = "motd";
     private static final String CFG_MAX_PLAYER_COUNT = "max-player-count";
+    private static final String CFG_BAN_PLAYER_LIST = "ban-player-list";
+    private static final String CFG_BAN_IP_LIST = "ban-ip-list";
 
-    private static final Map<String, String> CONFIG;
-    private static String FAVICON;
-    private static Component MOTD;
-    private static int MAX_PLAYER_COUNT;
-    private static final Set<String> BAN_PLAYER_LIST;
-    private static final Set<String> BAN_IP_LIST;
-
-    static {
-        Map<String, String> config;
-        try {
-            config = new ConcurrentHashMap<>(ConfigUtil.fromFileMap(new File(PATH_CONFIG)));
-        } catch (Throwable e) {
-            config = new ConcurrentHashMap<>();
-        }
-        CONFIG = config;
-
-        String favicon;
-        try {
-            favicon = FaviconUtil.fromFile(new File(CONFIG.getOrDefault(CFG_FAVICON, PATH_FAVICON)));
-        } catch (Throwable e) {
-            favicon = null;
-        }
-        FAVICON = favicon;
-
-        MOTD = Component.text(CONFIG.getOrDefault(CFG_MOTD, "Tribina comes here."));
-
-        int max_player_count;
-        try {
-            max_player_count = Integer.parseInt(CONFIG.getOrDefault(CFG_MAX_PLAYER_COUNT, "100"));
-        } catch (Throwable e) {
-            max_player_count = 100;
-        }
-        MAX_PLAYER_COUNT = max_player_count;
-
-        Set<String> ban_player_list;
-        Set<String> ban_ip_list;
-        try {
-            ban_player_list = new CopyOnWriteArraySet<>(ConfigUtil.fromFileList(new File(PATH_BAN_PLAYER_LIST)));
-        } catch (Throwable e) {
-            ban_player_list = new CopyOnWriteArraySet<>();
-        }
-        try {
-            ban_ip_list = new CopyOnWriteArraySet<>(ConfigUtil.fromFileList(new File(PATH_BAN_IP_LIST)));
-        } catch (Throwable e) {
-            ban_ip_list = new CopyOnWriteArraySet<>();
-        }
-        BAN_PLAYER_LIST = ban_player_list;
-        BAN_IP_LIST = ban_ip_list;
-    }
+    private static final Configuration CONFIG = new Configuration(new File(PATH_CONFIG));
+    private static String FAVICON = FaviconUtil.fromFile(new File(CONFIG.getString(CFG_FAVICON, PATH_FAVICON)));
+    private static Component MOTD = Component.text(CONFIG.getString(CFG_MOTD, "Tribina comes here."));
+    private static int MAX_PLAYER_COUNT = CONFIG.getInteger(CFG_MAX_PLAYER_COUNT, 100);
+    private static final Set<String> BAN_PLAYER_LIST = new CopyOnWriteArraySet<>(CONFIG.getList(CFG_BAN_PLAYER_LIST));
+    private static final Set<String> BAN_IP_LIST = new CopyOnWriteArraySet<>(CONFIG.getList(CFG_BAN_IP_LIST));
 
     @Nullable
     public static String getFavicon() {
@@ -95,10 +51,10 @@ public class ServerInfo {
             favicon = FaviconUtil.fromFile(file);
         } catch (Throwable ignored) {}
         if (favicon != null) {
-            CONFIG.put(CFG_FAVICON, filename);
+            CONFIG.modify(CFG_FAVICON, filename);
             FAVICON = favicon;
             try {
-                ConfigUtil.toFileMap(new File(PATH_CONFIG), CONFIG);
+                CONFIG.save();
                 return true;
             } catch (Throwable e) {
                 return false;
@@ -117,9 +73,9 @@ public class ServerInfo {
         Component motd = null;
         motd = Component.text(text);
         MOTD = motd;
-        CONFIG.put(CFG_MOTD, text);
+        CONFIG.modify(CFG_MOTD, text);
         try {
-            ConfigUtil.toFileMap(new File(PATH_CONFIG), CONFIG);
+            CONFIG.save();
             return true;
         } catch (Throwable e) {
             return false;
@@ -133,9 +89,9 @@ public class ServerInfo {
     public static boolean setMaxPlayerCount(int maxPlayerCount) {
         if (maxPlayerCount >= 1) {
             MAX_PLAYER_COUNT = maxPlayerCount;
-            CONFIG.put(CFG_MAX_PLAYER_COUNT, String.valueOf(MAX_PLAYER_COUNT));
+            CONFIG.modify(CFG_MAX_PLAYER_COUNT, Integer.toString(MAX_PLAYER_COUNT));
             try {
-                ConfigUtil.toFileMap(new File(PATH_CONFIG), CONFIG);
+                CONFIG.save();
                 return true;
             } catch (Throwable e) {
                 return false;
@@ -145,12 +101,20 @@ public class ServerInfo {
         }
     }
 
+    public static List<String> getBanList() {
+        List<String> list = new LinkedList<>();
+        list.addAll(BAN_IP_LIST);
+        list.addAll(BAN_PLAYER_LIST);
+        return list;
+    }
+
     public static boolean banPlayer(@NotNull String username) {
         BAN_PLAYER_LIST.add(username);
+        CONFIG.modifyAdd(CFG_BAN_PLAYER_LIST, username);
         Player player = MinecraftServer.getConnectionManager().getPlayer(username);
         if (player != null) player.kick(Component.translatable("multiplayer.disconnect.banned"));
         try {
-            ConfigUtil.toFileList(new File(PATH_BAN_PLAYER_LIST), BAN_PLAYER_LIST);
+            CONFIG.save();
             return true;
         } catch (Throwable e) {
             return false;
@@ -159,11 +123,12 @@ public class ServerInfo {
 
     public static boolean banIP(@NotNull String ip) {
         BAN_IP_LIST.add(ip);
+        CONFIG.modifyAdd(CFG_BAN_IP_LIST, ip);
         for (Player player : MinecraftServer.getConnectionManager().getOnlinePlayers()) {
             if (isBanned(player)) player.kick(Component.translatable("multiplayer.disconnect.banned"));
         }
         try {
-            ConfigUtil.toFileList(new File(PATH_BAN_IP_LIST), BAN_IP_LIST);
+            CONFIG.save();
             return true;
         } catch (Throwable e) {
             return false;
@@ -172,8 +137,9 @@ public class ServerInfo {
 
     public static boolean unbanPlayer(@NotNull String username) {
         BAN_PLAYER_LIST.remove(username);
+        CONFIG.modifyRemove(CFG_BAN_PLAYER_LIST, username);
         try {
-            ConfigUtil.toFileList(new File(PATH_BAN_PLAYER_LIST), BAN_PLAYER_LIST);
+            CONFIG.save();
             return true;
         } catch (Throwable e) {
             return false;
@@ -182,8 +148,9 @@ public class ServerInfo {
 
     public static boolean unbanIP(@NotNull String ip) {
         BAN_IP_LIST.remove(ip);
+        CONFIG.modifyRemove(CFG_BAN_IP_LIST, ip);
         try {
-            ConfigUtil.toFileList(new File(PATH_BAN_IP_LIST), BAN_IP_LIST);
+            CONFIG.save();
             return true;
         } catch (Throwable e) {
             return false;
