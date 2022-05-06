@@ -4,35 +4,44 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
-import net.minestom.server.instance.Instance;
-import net.minestom.server.instance.InstanceManager;
+import net.minestom.server.event.EventFilter;
+import net.minestom.server.event.EventNode;
+import net.minestom.server.event.GlobalEventHandler;
+import net.minestom.server.event.trait.InstanceEvent;
+import net.minestom.server.instance.SharedInstance;
 import net.minestom.server.instance.block.Block;
 import net.tarcadia.tribina.gameplay.GamePlay;
+import net.tarcadia.tribina.gameplay.lobby.instance.LobbyInstance;
+import net.tarcadia.tribina.gameplay.tribina.TribinaGamePlay;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.UUID;
+
 public class LobbyGamePlay implements GamePlay {
 
-    private static Instance lobbyWorld;
+    public static final SharedInstance LOBBY_WORLD = MinecraftServer.getInstanceManager().registerSharedInstance(new LobbyInstance(UUID.randomUUID(), TribinaGamePlay.TRIBINA_WORLD));
+    public static final EventNode<InstanceEvent> LOBBY_EVENT_NODE = EventNode.value("lobby", EventFilter.INSTANCE, instance -> instance == LOBBY_WORLD);
     public static final Logger LOGGER = LoggerFactory.getLogger(LobbyGamePlay.class);
 
-    static {
-        init();
+    @NotNull
+    public static SharedInstance getLobbyInstance() {
+        return LOBBY_WORLD;
     }
 
     @NotNull
-    public static Instance getLobbyWorld() {
-        return lobbyWorld;
+    public static EventNode<InstanceEvent> getLobbyEventNode() {
+        return LOBBY_EVENT_NODE;
     }
 
     public static synchronized void init() {
 
-        InstanceManager instanceManager = MinecraftServer.getInstanceManager();
-        lobbyWorld = instanceManager.createInstanceContainer();
-        lobbyWorld.setGenerator(unit ->
+        LOBBY_WORLD.setGenerator(unit ->
                 unit.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
 
+        GlobalEventHandler handler = MinecraftServer.getGlobalEventHandler();
+        handler.addChild(LOBBY_EVENT_NODE);
     }
 
     public final Player player;
@@ -60,7 +69,7 @@ public class LobbyGamePlay implements GamePlay {
     @Override
     public void start() {
         start_no_respawn(player);
-        player.setInstance(lobbyWorld);
+        player.setInstance(LOBBY_WORLD);
         player.setRespawnPoint(new Pos(0, 42, 0));
     }
 
