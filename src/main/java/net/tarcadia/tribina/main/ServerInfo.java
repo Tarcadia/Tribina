@@ -101,6 +101,14 @@ public class ServerInfo {
         }
     }
 
+    public static List<String> getPlayingList() {
+        List<String> list = new LinkedList<>();
+        for (Player player : MinecraftServer.getConnectionManager().getOnlinePlayers()) {
+            list.add(player.getUsername());
+        }
+        return list;
+    }
+
     public static List<String> getBanList() {
         List<String> list = new LinkedList<>();
         list.addAll(BAN_IP_LIST);

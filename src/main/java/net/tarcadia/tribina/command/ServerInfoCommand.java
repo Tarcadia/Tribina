@@ -114,6 +114,7 @@ public class ServerInfoCommand extends Command {
                 sender.sendMessage("MOTD: " + ServerInfo.getMOTD());
                 sender.sendMessage("Max Player Count: " + ServerInfo.getMaxPlayerCount());
                 sender.sendMessage("Ban List: " + ServerInfo.getBanList());
+                sender.sendMessage("Playing List: " + ServerInfo.getPlayingList());
             }
             );
         }
