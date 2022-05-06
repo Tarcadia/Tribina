@@ -7,9 +7,9 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.GlobalEventHandler;
+import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.event.trait.InstanceEvent;
 import net.minestom.server.instance.SharedInstance;
-import net.minestom.server.instance.block.Block;
 import net.tarcadia.tribina.gameplay.GamePlay;
 import net.tarcadia.tribina.gameplay.lobby.instance.LobbyInstance;
 import net.tarcadia.tribina.gameplay.tribina.TribinaGamePlay;
@@ -37,8 +37,9 @@ public class LobbyGamePlay implements GamePlay {
 
     public static synchronized void init() {
 
-        LOBBY_WORLD.setGenerator(unit ->
-                unit.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
+        LOBBY_WORLD.setTimeRate(20);
+        LOBBY_WORLD.getWorldBorder().setCenter(0, 0);
+        LOBBY_WORLD.getWorldBorder().setDiameter(1000);
 
         GlobalEventHandler handler = MinecraftServer.getGlobalEventHandler();
         handler.addChild(LOBBY_EVENT_NODE);
@@ -46,14 +47,11 @@ public class LobbyGamePlay implements GamePlay {
 
     public final Player player;
 
-    public LobbyGamePlay(@NotNull Player player) {
-        this.player = player;
+    public LobbyGamePlay(@NotNull PlayerLoginEvent event) {
+        event.setSpawningInstance(LOBBY_WORLD);
+        this.player = event.getPlayer();
+        this.player.setRespawnPoint(new Pos(0, 42, 0));
         this.load();
-    }
-
-    public void start_no_respawn(@NotNull Player player) {
-        player.setGameMode(GameMode.SPECTATOR);
-        player.setAutoViewable(false);
     }
 
     @Override
@@ -68,13 +66,13 @@ public class LobbyGamePlay implements GamePlay {
 
     @Override
     public void start() {
-        start_no_respawn(player);
-        player.setInstance(LOBBY_WORLD);
-        player.setRespawnPoint(new Pos(0, 42, 0));
+        player.setGameMode(GameMode.SPECTATOR);
+        player.setAutoViewable(false);
     }
 
     @Override
     public void end() {
-
+        this.save();
+        player.setAutoViewable(true);
     }
 }

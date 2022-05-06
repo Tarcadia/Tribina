@@ -18,4 +18,8 @@ public class TribinaGamePlay {
     public static final EventNode<InstanceEvent> TRIBINA_EVENT_NODE = EventNode.value("tribina", EventFilter.INSTANCE, instance -> instance == TRIBINA_WORLD);
     public static final Logger LOGGER = LoggerFactory.getLogger(LobbyGamePlay.class);
 
+    public static void init() {
+
+    }
+
 }

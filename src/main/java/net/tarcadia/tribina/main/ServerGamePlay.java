@@ -1,7 +1,6 @@
 package net.tarcadia.tribina.main;
 
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.event.GlobalEventHandler;
@@ -11,6 +10,7 @@ import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.network.ConnectionManager;
 import net.tarcadia.tribina.gameplay.GamePlay;
 import net.tarcadia.tribina.gameplay.lobby.LobbyGamePlay;
+import net.tarcadia.tribina.gameplay.tribina.TribinaGamePlay;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +29,10 @@ public class ServerGamePlay {
     }
 
     public static void setGamePlay(@NotNull Player player, @NotNull GamePlay gamePlay) {
+        GamePlay preGamePlay = playerGamePlay.get(player.getUuid());
+        if (preGamePlay != null) preGamePlay.end();
         playerGamePlay.put(player.getUuid(), gamePlay);
+        gamePlay.start();
     }
 
     public static void removeGamePlay(@NotNull Player player) {
@@ -59,7 +62,9 @@ public class ServerGamePlay {
     }
 
     public static void initServerGamePlay() {
+
         LobbyGamePlay.init();
+        TribinaGamePlay.init();
 
         if (!MojangAuth.isEnabled()) {
             ConnectionManager manager = MinecraftServer.getConnectionManager();
@@ -74,11 +79,7 @@ public class ServerGamePlay {
         GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
         globalEventHandler.addListener(PlayerLoginEvent.class, event -> {
             Player player = event.getPlayer();
-            LobbyGamePlay lobbyGamePlay = new LobbyGamePlay(player);
-            ServerGamePlay.setGamePlay(player, lobbyGamePlay);
-            lobbyGamePlay.start_no_respawn(player);
-            event.setSpawningInstance(LobbyGamePlay.getLobbyInstance());
-            event.getPlayer().setRespawnPoint(new Pos(0, 42, 0));
+            ServerGamePlay.setGamePlay(player, new LobbyGamePlay(event));
         });
 
         GlobalEventHandler handler = MinecraftServer.getGlobalEventHandler();
