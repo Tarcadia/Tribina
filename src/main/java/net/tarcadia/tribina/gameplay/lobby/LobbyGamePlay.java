@@ -21,13 +21,13 @@ import java.util.UUID;
 
 public class LobbyGamePlay implements GamePlay {
 
-    public static final SharedInstance LOBBY_WORLD = MinecraftServer.getInstanceManager().registerSharedInstance(new LobbyInstance(UUID.randomUUID(), TribinaGamePlay.TRIBINA_WORLD));
-    public static final EventNode<InstanceEvent> LOBBY_EVENT_NODE = EventNode.value("lobby", EventFilter.INSTANCE, instance -> instance == LOBBY_WORLD);
+    public static final SharedInstance LOBBY_INSTANCE = MinecraftServer.getInstanceManager().registerSharedInstance(new LobbyInstance(UUID.randomUUID(), TribinaGamePlay.TRIBINA_WORLD));
+    public static final EventNode<InstanceEvent> LOBBY_EVENT_NODE = EventNode.value("lobby", EventFilter.INSTANCE, instance -> instance == LOBBY_INSTANCE);
     public static final Logger LOGGER = LoggerFactory.getLogger(LobbyGamePlay.class);
 
     @NotNull
     public static SharedInstance getLobbyInstance() {
-        return LOBBY_WORLD;
+        return LOBBY_INSTANCE;
     }
 
     @NotNull
@@ -37,9 +37,9 @@ public class LobbyGamePlay implements GamePlay {
 
     public static synchronized void init() {
 
-        LOBBY_WORLD.setTimeRate(20);
-        LOBBY_WORLD.getWorldBorder().setCenter(0, 0);
-        LOBBY_WORLD.getWorldBorder().setDiameter(1000);
+        LOBBY_INSTANCE.setTimeRate(20);
+        LOBBY_INSTANCE.getWorldBorder().setCenter(0, 0);
+        LOBBY_INSTANCE.getWorldBorder().setDiameter(1000);
 
         GlobalEventHandler handler = MinecraftServer.getGlobalEventHandler();
         handler.addChild(LOBBY_EVENT_NODE);
@@ -48,7 +48,7 @@ public class LobbyGamePlay implements GamePlay {
     public final Player player;
 
     public LobbyGamePlay(@NotNull PlayerLoginEvent event) {
-        event.setSpawningInstance(LOBBY_WORLD);
+        event.setSpawningInstance(LOBBY_INSTANCE);
         this.player = event.getPlayer();
         this.player.setRespawnPoint(new Pos(0, 42, 0));
         this.load();
