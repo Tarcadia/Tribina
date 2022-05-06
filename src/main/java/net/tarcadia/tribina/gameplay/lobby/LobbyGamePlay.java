@@ -21,7 +21,7 @@ import java.util.UUID;
 
 public class LobbyGamePlay implements GamePlay {
 
-    public static final SharedInstance LOBBY_INSTANCE = MinecraftServer.getInstanceManager().registerSharedInstance(new LobbyInstance(UUID.randomUUID(), TribinaGamePlay.TRIBINA_WORLD));
+    public static final SharedInstance LOBBY_INSTANCE = MinecraftServer.getInstanceManager().registerSharedInstance(new LobbyInstance(UUID.randomUUID(), TribinaGamePlay.TRIBINA_INSTANCE));
     public static final EventNode<InstanceEvent> LOBBY_EVENT_NODE = EventNode.value("lobby", EventFilter.INSTANCE, instance -> instance == LOBBY_INSTANCE);
     public static final Logger LOGGER = LoggerFactory.getLogger(LobbyGamePlay.class);
 
