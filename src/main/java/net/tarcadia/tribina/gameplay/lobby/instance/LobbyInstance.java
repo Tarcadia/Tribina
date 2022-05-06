@@ -1,4 +1,4 @@
-package net.tarcadia.tribina.instance;
+package net.tarcadia.tribina.gameplay.lobby.instance;
 
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.Player;
@@ -13,9 +13,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public final class ChangelessSharedInstance extends SharedInstance {
+public final class LobbyInstance extends SharedInstance {
 
-    public ChangelessSharedInstance(@NotNull UUID uniqueId, @NotNull InstanceContainer instanceContainer) {
+    public LobbyInstance(@NotNull UUID uniqueId, @NotNull InstanceContainer instanceContainer) {
         super(uniqueId, instanceContainer);
     }
 
