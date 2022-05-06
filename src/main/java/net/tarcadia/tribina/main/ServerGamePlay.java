@@ -77,7 +77,7 @@ public class ServerGamePlay {
             LobbyGamePlay lobbyGamePlay = new LobbyGamePlay(player);
             ServerGamePlay.setGamePlay(player, lobbyGamePlay);
             lobbyGamePlay.start_no_respawn(player);
-            event.setSpawningInstance(LobbyGamePlay.getLobbyWorld());
+            event.setSpawningInstance(LobbyGamePlay.getLobbyInstance());
             event.getPlayer().setRespawnPoint(new Pos(0, 42, 0));
         });
 
