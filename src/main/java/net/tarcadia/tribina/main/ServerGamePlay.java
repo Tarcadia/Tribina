@@ -3,9 +3,12 @@ package net.tarcadia.tribina.main;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
+import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerLoginEvent;
+import net.minestom.server.extras.MojangAuth;
+import net.minestom.server.network.ConnectionManager;
 import net.tarcadia.tribina.gameplay.GamePlay;
 import net.tarcadia.tribina.gameplay.lobby.LobbyGamePlay;
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +59,16 @@ public class ServerGamePlay {
 
     public static void initServerGamePlay() {
         LobbyGamePlay.init();
+
+        if (!MojangAuth.isEnabled()) {
+            ConnectionManager manager = MinecraftServer.getConnectionManager();
+            manager.setUuidProvider((playerConnection, username) -> UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8)));
+            manager.setPlayerProvider((uuid, username, connection) -> {
+                Player player = new Player(uuid, username, connection);
+                player.setSkin(PlayerSkin.fromUsername(username));
+                return player;
+            });
+        }
 
         GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
         globalEventHandler.addListener(PlayerLoginEvent.class, event -> {

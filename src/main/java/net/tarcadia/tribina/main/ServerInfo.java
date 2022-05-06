@@ -176,13 +176,6 @@ public class ServerInfo {
     }
 
     public static void initServerInfo() {
-        ConnectionManager manager = MinecraftServer.getConnectionManager();
-        manager.setUuidProvider((playerConnection, username) -> UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8)));
-        manager.setPlayerProvider(((uuid, username, connection) -> {
-            Player player = new Player(uuid, username, connection);
-            player.setSkin(PlayerSkin.fromUsername(username));
-            return player;
-        }));
 
         GlobalEventHandler handler = MinecraftServer.getGlobalEventHandler();
         handler.addListener(AsyncPlayerPreLoginEvent.class, event -> {
