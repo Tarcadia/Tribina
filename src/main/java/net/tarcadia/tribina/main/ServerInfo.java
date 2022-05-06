@@ -3,12 +3,9 @@ package net.tarcadia.tribina.main;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
-import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerPreLoginEvent;
 import net.minestom.server.event.server.ServerListPingEvent;
-import net.minestom.server.network.ConnectionManager;
-import net.minestom.server.network.packet.server.login.LoginDisconnectPacket;
 import net.minestom.server.ping.ResponseData;
 import net.tarcadia.tribina.util.FaviconUtil;
 import net.tarcadia.tribina.util.configuration.Configuration;
@@ -17,8 +14,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 public class ServerInfo {

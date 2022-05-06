@@ -1,6 +1,7 @@
 package net.tarcadia.tribina.main;
 
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.extras.MojangAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,7 @@ public class Main {
         MinecraftServer server = MinecraftServer.init();
         MinecraftServer.setCompressionThreshold(COMPRESSION_THRESHOLD);
         MinecraftServer.setBrandName(BRAND_NAME);
+        MojangAuth.init();
 
         initServerInfo();
         initServerCommand();
