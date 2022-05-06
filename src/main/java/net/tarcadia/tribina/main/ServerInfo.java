@@ -189,10 +189,12 @@ public class ServerInfo {
             if (isBanned(event.getPlayer())) {
                 event.getPlayer().getPlayerConnection().sendPacket(new LoginDisconnectPacket(Component.translatable("multiplayer.disconnect.banned")));
                 event.getPlayer().getPlayerConnection().disconnect();
+                return;
             }
             if (MinecraftServer.getConnectionManager().getOnlinePlayers().size() >= MAX_PLAYER_COUNT) {
                 event.getPlayer().getPlayerConnection().sendPacket(new LoginDisconnectPacket(Component.translatable("multiplayer.disconnect.server_full")));
                 event.getPlayer().getPlayerConnection().disconnect();
+                return;
             }
         });
         handler.addListener(ServerListPingEvent.class, event -> {
