@@ -1,17 +1,21 @@
 package net.tarcadia.tribina.gameplay.tribina;
 
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.entity.GameMode;
+import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.trait.InstanceEvent;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
+import net.tarcadia.tribina.gameplay.GamePlay;
 import net.tarcadia.tribina.gameplay.lobby.LobbyGamePlay;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TribinaGamePlay {
+public class TribinaGamePlay implements GamePlay {
 
     // TODO: A LOT
 
@@ -28,4 +32,34 @@ public class TribinaGamePlay {
         handler.addChild(TRIBINA_EVENT_NODE);
     }
 
+    private final Player player;
+    public TribinaGamePlay(@NotNull Player player) {
+        this.player = player;
+    }
+
+    @Override
+    public void load() {
+
+    }
+
+    @Override
+    public void save() {
+
+    }
+
+    @Override
+    public void start() {
+        this.player.setGameMode(GameMode.CREATIVE);
+        this.player.setInstance(TRIBINA_INSTANCE);
+    }
+
+    @Override
+    public void tick() {
+
+    }
+
+    @Override
+    public void end() {
+
+    }
 }

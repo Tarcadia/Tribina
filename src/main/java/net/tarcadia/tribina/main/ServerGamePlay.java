@@ -6,6 +6,7 @@ import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerLoginEvent;
+import net.minestom.server.event.player.PlayerTickEvent;
 import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.network.ConnectionManager;
 import net.tarcadia.tribina.gameplay.GamePlay;
@@ -28,11 +29,20 @@ public class ServerGamePlay {
         return playerGamePlay.get(player.getUuid());
     }
 
+    public static boolean atGamePlay(@NotNull Player player, @NotNull Class<?> clazz) {
+        return clazz.isInstance(playerGamePlay.get(player.getUuid()));
+    }
+
     public static void setGamePlay(@NotNull Player player, @NotNull GamePlay gamePlay) {
         GamePlay preGamePlay = playerGamePlay.get(player.getUuid());
         if (preGamePlay != null) preGamePlay.end();
         playerGamePlay.put(player.getUuid(), gamePlay);
         gamePlay.start();
+    }
+
+    public static void tickGamePlay(@NotNull Player player) {
+        GamePlay gamePlay = playerGamePlay.get(player.getUuid());
+        if (gamePlay != null) gamePlay.tick();
     }
 
     public static void removeGamePlay(@NotNull Player player) {
@@ -76,19 +86,22 @@ public class ServerGamePlay {
             });
         }
 
-        GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
-        globalEventHandler.addListener(PlayerLoginEvent.class, event -> {
+        GlobalEventHandler handler = MinecraftServer.getGlobalEventHandler();
+        handler.addListener(PlayerLoginEvent.class, event -> {
             Player player = event.getPlayer();
             ServerGamePlay.setGamePlay(player, new LobbyGamePlay(event));
         });
-
-        GlobalEventHandler handler = MinecraftServer.getGlobalEventHandler();
+        handler.addListener(PlayerTickEvent.class, event -> {
+            Player player = event.getPlayer();
+            ServerGamePlay.tickGamePlay(player);
+        });
         handler.addListener(PlayerDisconnectEvent.class, event -> {
             Player player = event.getPlayer();
             saveGamePlay(player);
             endGamePlay(player);
             removeGamePlay(player);
         });
+
     }
 
 }
