@@ -8,14 +8,14 @@ import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class ThreadPoolHandler<T> implements Handler<T> {
+public class ThreadPoolProvidedHandler<T> implements Handler<T> {
 
     private final String name;
     private final BlockingQueue<Handler<T>> queue = new LinkedBlockingQueue<>();
     private final Thread[] pool;
     private final Provider<T, Handler<T>> provider;
 
-    public ThreadPoolHandler(int size, @NotNull Provider<T, Handler<T>> provider) {
+    public ThreadPoolProvidedHandler(int size, @NotNull Provider<T, Handler<T>> provider) {
         this.name = "";
         this.pool = new Thread[size];
         this.provider = provider;
@@ -25,7 +25,7 @@ public class ThreadPoolHandler<T> implements Handler<T> {
         }
     }
 
-    public ThreadPoolHandler(@NotNull String name, int size, @NotNull Provider<T, Handler<T>> provider) {
+    public ThreadPoolProvidedHandler(@NotNull String name, int size, @NotNull Provider<T, Handler<T>> provider) {
         this.name = name;
         this.pool = new Thread[size];
         this.provider = provider;
