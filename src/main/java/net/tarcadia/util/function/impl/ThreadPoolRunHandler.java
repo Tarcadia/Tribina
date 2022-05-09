@@ -1,34 +1,31 @@
 package net.tarcadia.util.function.impl;
 
 import net.tarcadia.util.function.Handler;
-import net.tarcadia.util.function.Provider;
+import net.tarcadia.util.function.Runner;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class ThreadPoolHandler<T> implements Handler<T> {
+public class ThreadPoolRunHandler<T extends Runner> implements Handler<T> {
 
     private final String name;
-    private final BlockingQueue<Handler<T>> queue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Runner> queue = new LinkedBlockingQueue<>();
     private final Thread[] pool;
-    private final Provider<T, Handler<T>> provider;
 
-    public ThreadPoolHandler(int size, @NotNull Provider<T, Handler<T>> provider) {
+    public ThreadPoolRunHandler(int size) {
         this.name = "";
         this.pool = new Thread[size];
-        this.provider = provider;
         for (int i = 0; i < this.pool.length; i++) {
             pool[i] = new Thread(this::threaded);
             pool[i].start();
         }
     }
 
-    public ThreadPoolHandler(@NotNull String name, int size, @NotNull Provider<T, Handler<T>> provider) {
+    public ThreadPoolRunHandler(@NotNull String name, int size) {
         this.name = name;
         this.pool = new Thread[size];
-        this.provider = provider;
         for (int i = 0; i < this.pool.length; i++) {
             pool[i] = new Thread(this::threaded);
             pool[i].start();
@@ -43,13 +40,12 @@ public class ThreadPoolHandler<T> implements Handler<T> {
 
     @Override
     public void handle(T t) {
-        Handler<T> handler = o -> this.provider.provide(t).handle(t);
-        this.queue.offer(handler);
+        this.queue.offer(t);
     }
 
     private void threaded() {
         try {
-            while (true) Objects.requireNonNull(this.queue.take()).handle(null);
+            while (true) Objects.requireNonNull(this.queue.take()).run();
         } catch (InterruptedException ignored) {
         }
     }
