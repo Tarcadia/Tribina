@@ -7,10 +7,10 @@ import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class ThreadPoolProvidedHandler<T extends Handler<U>, U> implements Handler<T> {
+public class ThreadPoolProvidedHandler<T extends Runnable> implements Handler<T> {
 
     private final String name;
-    private final BlockingQueue<Handler<U>> queue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
     private final Thread[] pool;
 
     public ThreadPoolProvidedHandler(int size) {
@@ -44,7 +44,7 @@ public class ThreadPoolProvidedHandler<T extends Handler<U>, U> implements Handl
 
     private void threaded() {
         try {
-            while (true) Objects.requireNonNull(this.queue.take()).handle(null);
+            while (true) Objects.requireNonNull(this.queue.take()).run();
         } catch (InterruptedException ignored) {
         }
     }
