@@ -15,6 +15,8 @@ public class ThreadPoolHandleHandler<T> implements Handler<T> {
     private final Thread[] pool;
     private final Provider<T, Handler<T>> provider;
 
+    private boolean interrupted = false;
+
     public ThreadPoolHandleHandler(int size, @NotNull Provider<T, Handler<T>> provider) {
         this.name = "";
         this.pool = new Thread[size];
@@ -36,6 +38,7 @@ public class ThreadPoolHandleHandler<T> implements Handler<T> {
     }
 
     public void interrupt() {
+        this.interrupted = true;
         for (Thread thread : this.pool) {
             thread.interrupt();
         }
@@ -49,7 +52,7 @@ public class ThreadPoolHandleHandler<T> implements Handler<T> {
 
     private void threaded() {
         try {
-            while (true) Objects.requireNonNull(this.queue.take()).handle(null);
+            while (!this.interrupted) Objects.requireNonNull(this.queue.take()).handle(null);
         } catch (InterruptedException ignored) {
         }
     }

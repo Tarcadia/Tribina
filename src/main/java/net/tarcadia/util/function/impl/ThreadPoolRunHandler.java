@@ -14,11 +14,13 @@ public class ThreadPoolRunHandler<T extends Runner> implements Handler<T> {
     private final BlockingQueue<Runner> queue = new LinkedBlockingQueue<>();
     private final Thread[] pool;
 
+    private boolean interrupted = false;
+
     public ThreadPoolRunHandler(int size) {
         this.name = "";
         this.pool = new Thread[size];
         for (int i = 0; i < this.pool.length; i++) {
-            pool[i] = new Thread(this::threaded);
+            pool[i] = new Thread(() -> {});
             pool[i].start();
         }
     }
@@ -33,6 +35,7 @@ public class ThreadPoolRunHandler<T extends Runner> implements Handler<T> {
     }
 
     public void interrupt() {
+        this.interrupted = true;
         for (Thread thread : this.pool) {
             thread.interrupt();
         }
@@ -45,7 +48,7 @@ public class ThreadPoolRunHandler<T extends Runner> implements Handler<T> {
 
     private void threaded() {
         try {
-            while (true) Objects.requireNonNull(this.queue.take()).run();
+            while (!this.interrupted) Objects.requireNonNull(this.queue.take()).run();
         } catch (InterruptedException ignored) {
         }
     }
