@@ -54,11 +54,16 @@ public final class JE758Server extends ThreadPoolRunHandler<Runnable> {
             socket.setSoTimeout(CONNECTION_TIMEOUT);
             socket.setSendBufferSize(CONNECTION_SEND_BUFF_SIZE);
             socket.setReceiveBufferSize(CONNECTION_RECV_BUFF_SIZE);
-        } catch (SocketException e) {
-            //socket.close();
+        } catch (SocketException ignored) {
         }
+
         while (!this.interrupted) {
             // TODO: socket.getInputStream().readAllBytes(); and handle it
+        }
+
+        try {
+            socket.close();
+        } catch (IOException ignored) {
         }
     }
 
