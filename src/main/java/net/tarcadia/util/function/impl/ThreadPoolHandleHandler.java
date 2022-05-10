@@ -39,8 +39,8 @@ public class ThreadPoolHandleHandler<T> implements Handler<T> {
 
     public void interrupt() {
         this.interrupted = true;
-        for (Thread thread : this.pool) {
-            thread.interrupt();
+        for (final Thread thread : this.pool) {
+            if (thread != null) thread.interrupt();
         }
     }
 
