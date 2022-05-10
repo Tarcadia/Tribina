@@ -1,17 +1,16 @@
 package net.tarcadia.util.function.impl;
 
 import net.tarcadia.util.function.Handler;
-import net.tarcadia.util.function.Runner;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class ThreadPoolRunHandler<T extends Runner> implements Handler<T> {
+public class ThreadPoolRunHandler<T extends Runnable> implements Handler<T> {
 
     private final String name;
-    private final BlockingQueue<Runner> queue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
     private final Thread[] pool;
 
     private boolean interrupted = false;
