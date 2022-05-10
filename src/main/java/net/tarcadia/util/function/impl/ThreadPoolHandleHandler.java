@@ -4,7 +4,6 @@ import net.tarcadia.util.function.Handler;
 import net.tarcadia.util.function.Provider;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -58,9 +57,13 @@ public class ThreadPoolHandleHandler<T> implements Handler<T> {
     }
 
     private void run() {
-        try {
-            while (!this.interrupted) Objects.requireNonNull(this.queue.take()).run();
-        } catch (InterruptedException ignored) {
+        while (!this.interrupted) {
+            try {
+                this.queue.take().run();
+            } catch (InterruptedException ignored) {
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
     }
 }
