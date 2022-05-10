@@ -43,6 +43,10 @@ public class ThreadPoolHandleHandler<T> implements Handler<T> {
         }
     }
 
+    public boolean isInterrupted() {
+        return this.interrupted;
+    }
+
     public void clear() {
         this.queue.clear();
     }
