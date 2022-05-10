@@ -40,9 +40,15 @@ public class ThreadPoolRunHandler<T extends Runnable> implements Handler<T> {
         }
     }
 
+    public void clear() {
+        this.queue.clear();
+    }
+
     @Override
     public void handle(T t) {
-        this.queue.offer(t);
+        if (t != null) {
+            this.queue.offer(t);
+        }
     }
 
     private void threaded() {

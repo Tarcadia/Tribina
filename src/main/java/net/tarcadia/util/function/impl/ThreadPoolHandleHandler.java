@@ -11,7 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ThreadPoolHandleHandler<T> implements Handler<T> {
 
     private final String name;
-    private final BlockingQueue<Handler<T>> queue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
     private final Thread[] pool;
     private final Provider<T, Handler<T>> provider;
 
@@ -44,15 +44,22 @@ public class ThreadPoolHandleHandler<T> implements Handler<T> {
         }
     }
 
+    public void clear() {
+        this.queue.clear();
+    }
+
     @Override
     public void handle(T t) {
-        Handler<T> handler = o -> this.provider.provide(t).handle(t);
-        this.queue.offer(handler);
+        Handler<T> handler = this.provider.provide(t);
+        if (handler != null) {
+            Runnable run = () -> handler.handle(t);
+            this.queue.offer(run);
+        }
     }
 
     private void threaded() {
         try {
-            while (!this.interrupted) Objects.requireNonNull(this.queue.take()).handle(null);
+            while (!this.interrupted) Objects.requireNonNull(this.queue.take()).run();
         } catch (InterruptedException ignored) {
         }
     }
