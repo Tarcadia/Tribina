@@ -19,7 +19,7 @@ public class ThreadPoolRunHandler<T extends Runnable> implements Handler<T> {
         this.name = "";
         this.pool = new Thread[size];
         for (int i = 0; i < this.pool.length; i++) {
-            this.pool[i] = new Thread(() -> {});
+            this.pool[i] = new Thread(this::run);
             this.pool[i].start();
         }
     }
