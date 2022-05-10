@@ -19,8 +19,8 @@ public class ThreadPoolRunHandler<T extends Runnable> implements Handler<T> {
         this.name = "";
         this.pool = new Thread[size];
         for (int i = 0; i < this.pool.length; i++) {
-            pool[i] = new Thread(() -> {});
-            pool[i].start();
+            this.pool[i] = new Thread(() -> {});
+            this.pool[i].start();
         }
     }
 
@@ -28,8 +28,8 @@ public class ThreadPoolRunHandler<T extends Runnable> implements Handler<T> {
         this.name = name;
         this.pool = new Thread[size];
         for (int i = 0; i < this.pool.length; i++) {
-            pool[i] = new Thread(this::threaded);
-            pool[i].start();
+            this.pool[i] = new Thread(this::run);
+            this.pool[i].start();
         }
     }
 
@@ -51,7 +51,7 @@ public class ThreadPoolRunHandler<T extends Runnable> implements Handler<T> {
         }
     }
 
-    private void threaded() {
+    private void run() {
         try {
             while (!this.interrupted) Objects.requireNonNull(this.queue.take()).run();
         } catch (InterruptedException ignored) {
