@@ -1,6 +1,6 @@
-package net.tarcadia.tribina.api.front.je758;
+package net.tarcadia.tribina.api.front.network.protocol.je758;
 
-import net.tarcadia.tribina.network.TCPServer;
+import net.tarcadia.tribina.api.front.network.TCPServer;
 import net.tarcadia.util.function.impl.ThreadPoolRunHandler;
 import org.jetbrains.annotations.NotNull;
 

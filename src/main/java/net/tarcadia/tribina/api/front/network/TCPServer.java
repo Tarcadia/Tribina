@@ -1,4 +1,4 @@
-package net.tarcadia.tribina.network;
+package net.tarcadia.tribina.api.front.network;
 
 import net.tarcadia.util.function.Handler;
 import net.tarcadia.util.function.Provider;
